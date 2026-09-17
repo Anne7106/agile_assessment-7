@@ -2,24 +2,33 @@ pipeline {
     agent any
 
     stages {
-
         stage('Checkout') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/Anne7106/agile_assessment-7.git'
+                // Replace with your actual GitHub repo URL
+                git branch: 'main', url: 'https://github.com/Anne7106/agile_assessment-7.git'
             }
         }
-
-        stage('Generate Report') {
-            steps {
-                bat 'python app.py'
+        
+        stage('Parallel Processing') {
+            parallel {
+                stage('Academic Performance Checks') {
+                    steps {
+                        // Runs the performance analytics script
+                        bat 'python performance_analytics.py'
+                    }
+                }
+                stage('Student Records Checks') {
+                    steps {
+                        // Runs the records management script
+                        bat 'python student_records.py'
+                    }
+                }
             }
         }
-
-        stage('Archive Report') {
+        
+        stage('Summary') {
             steps {
-                archiveArtifacts artifacts: 'student_report.txt',
-                                 fingerprint: true
+                echo 'Both Academic Performance and Student Records processing are complete.'
             }
         }
     }
